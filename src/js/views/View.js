@@ -4,15 +4,16 @@ export default class View {
   _data;
 
   // ///////////////////////////////////////////////////////////////////////////////
-  render(data) {
+  render(data, render = true) {
     // if there is no data || or if there is data but the length is 0
     if (!data || (Array.isArray(data) && data.length === 0))
-      // return the error message
       return this.renderError();
-
     //data AKA model.state.recipe from controller.js
     this._data = data; //stores model.state.recipe to data
     const markup = this._generateMarkup();
+
+    if (!render) return markup;
+
     this._clear();
     // Insert the new html markup to the DOM after clearing out innerHTML
     this._parentElement.insertAdjacentHTML('afterbegin', markup);
