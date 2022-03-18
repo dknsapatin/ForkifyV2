@@ -1,4 +1,3 @@
-// FILE PURPOSE: Functions are used over and over in the project
 import { async } from 'regenerator-runtime';
 import { TIMEOUT_SEC } from './config.js';
 
@@ -10,14 +9,21 @@ const timeout = function (s) {
   });
 };
 
-export const getJSON = async function (url) {
+export const AJAX = async function (url, uploadData = undefined) {
   try {
-    const fetchPro = fetch(url);
-    // Fetch for the API
-    const res = await Promise.race([fetchPro, timeout(TIMEOUT_SEC)]); //Place the hash id to fetch the specifc object recipe
-    const data = await res.json(); // Convert constant "res" to JSON | Save it to constant "data"
+    const fetchPro = uploadData
+      ? fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(uploadData),
+        })
+      : fetch(url);
 
-    // Throw new error message base off of what the console says in each object
+    const res = await Promise.race([fetchPro, timeout(TIMEOUT_SEC)]);
+    const data = await res.json();
+
     if (!res.ok) throw new Error(`${data.message} (${res.status})`);
     return data;
   } catch (err) {
